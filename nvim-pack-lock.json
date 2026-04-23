@@ -6,7 +6,7 @@
       "version": "'v1.10.2'"
     },
     "conform.nvim": {
-      "rev": "086a40dc7ed8242c03be9f47fbcee68699cc2395",
+      "rev": "dca1a190aa85f9065979ef35802fb77131911106",
       "src": "https://github.com/stevearc/conform.nvim"
     },
     "everforest-nvim": {
@@ -15,7 +15,7 @@
     },
     "flash.nvim": {
       "rev": "fcea7ff883235d9024dc41e638f164a450c14ca2",
-      "src": "https://github.com/folke/flash.nvim.git"
+      "src": "https://github.com/folke/flash.nvim"
     },
     "friendly-snippets": {
       "rev": "6cd7280adead7f586db6fccbd15d2cac7e2188b9",
@@ -65,21 +65,17 @@
       "rev": "2715e04bea3ec9244f15b421dc5b18c0fe326210",
       "src": "https://github.com/nvim-mini/mini.surround"
     },
-    "move.nvim": {
-      "rev": "599b14047b82e92874b9a408e4df228b965c3a1d",
-      "src": "https://github.com/fedepujol/move.nvim"
-    },
     "multilayout.nvim": {
       "rev": "105f22f6329f19a1824f58774d1899f2a69a5e77",
       "src": "https://github.com/mrsobakin/multilayout.nvim"
     },
     "neoscroll.nvim": {
       "rev": "c8d29979cb0cb3a2437a8e0ae683fd82f340d3b8",
-      "src": "https://github.com/karb94/neoscroll.nvim.git"
+      "src": "https://github.com/karb94/neoscroll.nvim"
     },
     "nvim-autopairs": {
       "rev": "59bce2eef357189c3305e25bc6dd2d138c1683f5",
-      "src": "https://github.com/windwp/nvim-autopairs.git"
+      "src": "https://github.com/windwp/nvim-autopairs"
     },
     "nvim-lspconfig": {
       "rev": "e146efacbafed3789ac568abcc5a981c5decaa58",
@@ -112,10 +108,6 @@
     "tmux.nvim": {
       "rev": "32ceaf2793582955ef9576809730878c4d2d9426",
       "src": "https://github.com/aserowy/tmux.nvim"
-    },
-    "vim-tmux-navigator": {
-      "rev": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432",
-      "src": "https://github.com/christoomey/vim-tmux-navigator"
     }
   }
 }
