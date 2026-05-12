@@ -3,13 +3,7 @@ local add = vim.pack.add
 local function gh(str)
 	return "https://github.com/" .. str
 end
-local theme_file_path = vim.env.HOME .. "/.config/nvim/theme.lua"
-local theme_table = loadfile(theme_file_path)()
-local theme_path = theme_table[1][1]
-local theme_name = theme_table[2].opts.colorscheme
-
 add({
-	gh(theme_path),
 	gh("neovim/nvim-lspconfig"),
 	gh("stevearc/oil.nvim.git"),
 	gh("mason-org/mason.nvim"),
@@ -58,8 +52,6 @@ require("sixel-preview").setup({
 		image = "chafa",
 	},
 })
-
-vim.cmd("color " .. theme_name)
 
 ---@diagnostic disable-next-line
 require("tmux").setup({
