@@ -1,24 +1,70 @@
 local set = vim.keymap.set
 
--- Run a shell command in a small split. Closes the window when the process exits.
--- Uses jobstart(…, { term = true, on_exit }) (replaces termopen) because an interactive
--- :term + chansend only ends the child process; the shell keeps running, so TermClose
--- never fires.
-local function run_in_terminal(cmd)
+-- Bottom split stays open so crash output remains visible; next run enews + drops old term buffer.
+local RUN_TERM_HEIGHT = 10
+local RUN_TERM_SHRINK_HEIGHT = 1
+local run_in_terminal_state = { win = nil, buf = nil, is_shrunk = false }
+
+-- shrink_on_close: if true, window height is reduced on exit; next run expands again.
+-- on_exit always: if the run terminal is still the active window, focus the previous (last) window.
+local function run_in_terminal(cmd, shrink_on_close)
+	local s = run_in_terminal_state
+	local function after_term()
+		local buf = vim.api.nvim_get_current_buf()
+		vim.bo[buf].bufhidden = "wipe"
+		vim.bo[buf].buflisted = false
+		return buf
+	end
+	local function start_job()
+		local run_win = s.win
+		local function focus_previous_if_terminal_active()
+			if not vim.api.nvim_win_is_valid(run_win) or vim.api.nvim_get_current_win() ~= run_win then
+				return
+			end
+			local prev_id = vim.fn.win_getid(vim.fn.winnr("#"))
+			if prev_id > 0 and prev_id ~= run_win then
+				pcall(vim.api.nvim_set_current_win, prev_id)
+			end
+		end
+		vim.fn.jobstart({ "sh", "-c", cmd }, {
+			term = true,
+			on_exit = function()
+				vim.schedule(function()
+					if not vim.api.nvim_win_is_valid(run_win) then
+						return
+					end
+					if shrink_on_close then
+						pcall(vim.api.nvim_win_set_height, run_win, RUN_TERM_SHRINK_HEIGHT)
+						s.is_shrunk = true
+					end
+					focus_previous_if_terminal_active()
+				end)
+			end,
+		})
+		s.buf = after_term()
+	end
+
+	if s.win and vim.api.nvim_win_is_valid(s.win) then
+		vim.api.nvim_set_current_win(s.win)
+		if s.is_shrunk then
+			pcall(vim.api.nvim_win_set_height, s.win, RUN_TERM_HEIGHT)
+			s.is_shrunk = false
+		end
+		local old_buf = s.buf
+		vim.cmd("enew!")
+		if old_buf and vim.api.nvim_buf_is_valid(old_buf) then
+			pcall(vim.api.nvim_buf_delete, old_buf, { force = true })
+		end
+		start_job()
+		return
+	end
+
+	s.win, s.buf, s.is_shrunk = nil, nil, false
 	vim.cmd.vnew()
-	local win = vim.api.nvim_get_current_win()
+	s.win = vim.api.nvim_get_current_win()
 	vim.cmd.wincmd("J")
-	vim.api.nvim_win_set_height(0, 10)
-	vim.fn.jobstart({ "sh", "-c", cmd }, {
-		term = true,
-		on_exit = function()
-			vim.schedule(function()
-				if vim.api.nvim_win_is_valid(win) then
-					pcall(vim.api.nvim_win_close, win, true)
-				end
-			end)
-		end,
-	})
+	vim.api.nvim_win_set_height(0, RUN_TERM_HEIGHT)
+	start_job()
 end
 
 local miniclue = require("mini.clue")
@@ -48,6 +94,7 @@ miniclue.setup({
 		{ mode = { "n", "x" }, keys = "<Leader>l", desc = "+LSP" },
 		{ mode = { "n" }, keys = "<Leader>e", desc = "+Edit/Explore" },
 		{ mode = { "n" }, keys = "<Leader>r", desc = "+Run" },
+		{ mode = { "n" }, keys = "<Leader>t", desc = "+Tabs" },
 	},
 	window = {
 		delay = 500,
@@ -59,12 +106,17 @@ miniclue.setup({
 })
 
 -- Files
-set("n", "<C-s>", ":w<CR>") local builtin = require("telescope.builtin")
+set("n", "<C-s>", ":w<CR>")
+local builtin = require("telescope.builtin")
 set("n", "<leader>ff", builtin.find_files, { desc = "Find files" })
 set("n", "<leader>fg", builtin.live_grep, { desc = "Live grep" })
 set("n", "<leader>fb", builtin.buffers, { desc = "Buffers" })
-set("n", "<leader>fh", builtin.help_tags, { desc = "Help tags" })
-set("n", "<leader>fd", builtin.builtin, { desc = "Builtins" })
+set("n", "<leader><leader>", function()
+	builtin.buffers({ ignore_current_buffer = false, sort_mru = true })
+	vim.api.nvim_feedkeys("<Esc>", "i", false)
+end, { desc = "Buffers" })
+
+set("n", "<leader>fd", builtin.builtin, { desc = "All pickers" })
 set("n", "<leader>?", builtin.keymaps, { desc = "Keymaps" })
 
 -- Tmux
@@ -81,16 +133,9 @@ set("", "<C-M-S-l>", '<cmd>lua require("tmux").swap_to("right")<cr>')
 -- Unbinds
 set("", "<C- >", function() end)
 set("", " ", function() end)
-set({ "n", "o" }, "<CR>", function()
-	require("flash").jump({
-		remote_op = {
-			restore = true,
-			motion = nil,
-		},
-	})
-end)
+
 set("n", "<Leader>h", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
-set({ "n", "x", "o" }, "<Tab>", function()
+set({ "n", "x", "o" }, "mi", function()
 	require("flash").treesitter({
 		actions = {
 			["<Tab>"] = "next",
@@ -112,6 +157,8 @@ set("n", "<leader>lr", "<Cmd>lua vim.lsp.buf.rename()<CR>", { desc = "Rename" })
 set("n", "<leader>lR", "<Cmd>lua vim.lsp.buf.references()<CR>", { desc = "References" })
 set("n", "<leader>ls", "<Cmd>lua vim.lsp.buf.definition()<CR>", { desc = "Source definition" })
 set("n", "<leader>lt", "<Cmd>lua vim.lsp.buf.type_definition()<CR>", { desc = "Type definition" })
+
+set("n", "<leader>a", "<C-6>", { desc = "Go to last file" }) -- test
 
 set("n", "[p", '<Cmd>exe "iput! " . v:register<CR>', { desc = "Paste Above" })
 set("n", "]p", '<Cmd>exe "iput "  . v:register<CR>', { desc = "Paste Below" })
@@ -136,13 +183,35 @@ set("n", "<Leader>ek", edit_plugin_file("30_keymaps.lua"), { desc = "Keymaps con
 set("n", "<Leader>eq", explore_quickfix, { desc = "Quickfix list" })
 set("n", "<Leader>eQ", explore_locations, { desc = "Location list" })
 
--- set("n", "<leader>rl", function()
--- 	vim.fn.system("love .")
--- end, { desc = "Run LÖVE game from current directory" })
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true })
+-- vim.keymap.del("n", "C-i", { silent = true }) Tab is sending C-i
 
-set("n", "<Leader>rl", function()
-	run_in_terminal("love .")
+set("n", "<Leader>rll", function()
+	run_in_terminal("love .", true)
 end, { desc = "Run LÖVE with terminal attached" })
+
+for i = 1, 6 do
+	set("n", "<Leader>rl"..i, function()
+		run_in_terminal("love . slot_"..i, true)
+	end, { desc = "Run LÖVE with terminal attached" })
+end
+
+for i = 1, 6 do
+	set("n", "<Leader>rle"..i, function()
+		run_in_terminal("love editor_help slot_"..i, true)
+	end, { desc = "Run LÖVE help editor with terminal attached" })
+end
+
+vim.api.nvim_set_keymap("n", "<leader>tn", ":tabnew<CR>", { desc = "Create new tab", noremap = true, silent = true })
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>tq",
+	":tabclose<CR>",
+	{ desc = "Close current tab", noremap = true, silent = true }
+)
+
+vim.api.nvim_set_keymap("n", "<leader>tl", ":tabnext<CR>", { desc = "Select next tab" })
+vim.api.nvim_set_keymap("n", "<leader>th", ":tabprevious<CR>", { desc = "Select previous tab" })
 
 ---
 require("multilayout").setup({
@@ -151,4 +220,4 @@ require("multilayout").setup({
 	},
 	use_libukb = false,
 })
-require("langmapper").setup()
+-- require("langmapper").setup()

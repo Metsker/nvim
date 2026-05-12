@@ -3,7 +3,6 @@ local add = vim.pack.add
 local function gh(str)
 	return "https://github.com/" .. str
 end
-
 local theme_file_path = vim.env.HOME .. "/.config/nvim/theme.lua"
 local theme_table = loadfile(theme_file_path)()
 local theme_path = theme_table[1][1]
@@ -27,11 +26,11 @@ add({
 	gh("nvim-telescope/telescope-fzy-native.nvim"),
 	gh("nvim-lualine/lualine.nvim"),
 	gh("windwp/nvim-autopairs"),
-	gh("lukas-reineke/indent-blankline.nvim"),
 	gh("karb94/neoscroll.nvim"),
-	gh("folke/flash.nvim"),
 	gh("aserowy/tmux.nvim"),
-	gh("lewis6991/gitsigns.nvim"),
+
+	gh("folke/snacks.nvim"),
+	gh("diogo464/hotreload.nvim"),
 
 	gh("nvim-mini/mini.icons"),
 	gh("nvim-mini/mini.operators"),
@@ -39,9 +38,25 @@ add({
 	gh("nvim-mini/mini.move"),
 	gh("nvim-mini/mini.ai"),
 	gh("nvim-mini/mini.clue"),
+	gh("nvim-mini/mini.jump"),
+
+	gh("Metsker/sixelvim"),
+
+	gh("lewis6991/gitsigns.nvim"),
 
 	gh("mrsobakin/multilayout.nvim"),
-	gh("Wansmer/langmapper.nvim"),
+	-- gh("Wansmer/langmapper.nvim"),
+})
+
+require("sixel-preview").setup({
+	sixel = {
+		chafa_colors = "full",
+		max_width = 800,
+    max_height = 600,
+	},
+	converters = {
+		image = "chafa",
+	},
 })
 
 vim.cmd("color " .. theme_name)
@@ -57,8 +72,8 @@ require("tmux").setup({
 		resize_step_y = 5,
 	},
 	swap = {
-		enable_default_keybindings = false
-	}
+		enable_default_keybindings = false,
+	},
 })
 
 require("mason").setup()
@@ -66,36 +81,37 @@ require("nvim-autopairs").setup()
 require("lualine").setup({
 	options = {
 		globalstatus = true,
+		section_separators = "",
+		component_separators = "",
 	},
 	sections = {
+		lualine_b = { { "filename", path = 1 } },
+		lualine_c = {},
+		lualine_x = { "progress" },
+		lualine_y = { "branch", "diff", "diagnostics" },
 		lualine_z = { "lsp_status" },
 	},
 })
-require("ibl").setup({
-	indent = {
-		char = "▏",
-	},
-	scope = { enabled = false },
-})
+
+---@diagnostic disable-next-line
+require("hotreload").setup()
+require("gitsigns").setup()
+
 require("neoscroll").setup({
 	duration_multiplier = 0.5,
 })
-require("flash").setup({
-	label = {
-		uppercase = false,
-	},
-	modes = {
-		treesitter = {
-			label = { before = false, after = false },
-		},
-	},
+require("snacks").setup({
+	statuscolumn = { enabled = true },
+	-- image = {enabled = true },
+	indent = { enabled = true },
+	quickfile = { enabled = true },
 })
-require('gitsigns').setup()
 
 require("mini.icons").setup()
 require("mini.operators").setup()
 require("mini.surround").setup()
 require("mini.move").setup()
+require("mini.jump").setup()
 require("mini.ai").setup({
 	custom_textobjects = {
 		B = function()
@@ -171,6 +187,7 @@ require("oil").setup({
 require("telescope").setup({
 	defaults = {
 		borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+		buffer_previewer_maker = require("sixel-preview.telescope").previewer_maker,
 	},
 	extensions = {
 		fzy_native = {
