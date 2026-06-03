@@ -4,7 +4,11 @@ vim.o.relativenumber = true
 vim.o.number = true
 vim.o.signcolumn = "yes:1"
 vim.o.mousescroll = "ver:2,hor:6"
-vim.o.wrap = false
+-- vim.o.wrap = false
+vim.o.wrap = true
+
+vim.o.spell = true
+vim.o.spelllang = "en_us"
 
 vim.o.clipboard = "unnamedplus"
 vim.o.confirm = true
@@ -60,6 +64,7 @@ vim.diagnostic.config(diagnostic_opts)
 
 -- LSP
 vim.lsp.config("lua_ls", {
+	cmd = { "lua-language-server" },
 	settings = {
 		Lua = {
 			runtime = {

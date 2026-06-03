@@ -134,6 +134,11 @@ set("", "<C-M-S-l>", '<cmd>lua require("tmux").swap_to("right")<cr>')
 set("", "<C- >", function() end)
 set("", " ", function() end)
 
+-- Move by display lines (wrapped lines act as separate lines), but keep
+-- count-prefixed motions (e.g. 5j) on real lines so relative jumps still work.
+set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, desc = "Down (display line)" })
+set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, desc = "Up (display line)" })
+
 set("n", "<Leader>h", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 set({ "n", "x", "o" }, "mi", function()
 	require("flash").treesitter({
@@ -174,7 +179,8 @@ local explore_locations = function()
 end
 
 set("n", "<Leader>ef", function()
-	require("oil").open_float(nil, { preview = {} })
+	local path = vim.api.nvim_buf_get_name(0)
+	require("mini.files").open(path ~= "" and path or nil, true)
 end, { desc = "Explore files" })
 set("n", "<Leader>ei", "<Cmd>edit $MYVIMRC<CR>", { desc = "init.lua" })
 set("n", "<Leader>eo", edit_plugin_file("10_options.lua"), { desc = "Options config" })

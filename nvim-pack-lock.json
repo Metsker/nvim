@@ -33,10 +33,6 @@
       "rev": "131a558e13f9f28b15cd235557150ccb23f89286",
       "src": "https://github.com/nvim-lualine/lualine.nvim"
     },
-    "mason.nvim": {
-      "rev": "e54f5bf5f12c560da31c17eee5b3e1bd369f3ff9",
-      "src": "https://github.com/mason-org/mason.nvim"
-    },
     "matteblack.nvim": {
       "rev": "a8a039f5d6189b28d76fa0221e64965efec7e996",
       "src": "https://github.com/tahayvr/matteblack.nvim"
@@ -48,6 +44,10 @@
     "mini.clue": {
       "rev": "43bd6cf1c3ccdea46d403c32dbc4629fa6afa09d",
       "src": "https://github.com/nvim-mini/mini.clue"
+    },
+    "mini.files": {
+      "rev": "423d6b5afb7a94e658950d470957f830d43dd41e",
+      "src": "https://github.com/nvim-mini/mini.files"
     },
     "mini.icons": {
       "rev": "bac6317300e205335df425296570d84322730067",
@@ -100,10 +100,6 @@
     "nvim-treesitter-textobjects": {
       "rev": "851e865342e5a4cb1ae23d31caf6e991e1c99f1e",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects"
-    },
-    "oil.nvim": {
-      "rev": "0fcc83805ad11cf714a949c98c605ed717e0b83e",
-      "src": "https://github.com/stevearc/oil.nvim.git"
     },
     "plenary.nvim": {
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
