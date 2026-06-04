@@ -127,7 +127,3 @@ vim.api.nvim_create_autocmd("CursorMovedI", {
 		vim.lsp.buf.clear_references()
 	end,
 })
-
--- Colors
-vim.api.nvim_set_hl(0, "FloatBorder", { link = "TelescopeBorder" })
-vim.api.nvim_set_hl(0, "NormalFloat", { link = "TelescopeNormal" })

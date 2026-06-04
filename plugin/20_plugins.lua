@@ -13,9 +13,6 @@ add({
 		src = gh("saghen/blink.cmp.git"),
 		version = "v1.10.2",
 	},
-	gh("nvim-lua/plenary.nvim"),
-	gh("nvim-telescope/telescope.nvim"),
-	gh("nvim-telescope/telescope-fzy-native.nvim"),
 	gh("nvim-lualine/lualine.nvim"),
 	gh("windwp/nvim-autopairs"),
 	gh("karb94/neoscroll.nvim"),
@@ -94,7 +91,85 @@ require("snacks").setup({
 	statuscolumn = { enabled = true },
 	indent = { enabled = true },
 	quickfile = { enabled = true },
+	picker = {
+		enabled = true,
+		win = {
+			input = {
+				keys = {
+					-- single <Esc> closes the picker instead of dropping to normal mode first
+					["<Esc>"] = { "close", mode = { "n", "i" } },
+				},
+			},
+		},
+	},
 })
+
+-- Render snacks picker image/PDF previews with sixel (via sixelvim). Snacks'
+-- built-in image preview only speaks the kitty graphics protocol, so on a sixel
+-- terminal we wrap the default `file` previewer used by the file-based pickers.
+do
+	local Snacks = require("snacks")
+	local snacks_preview = require("snacks.picker.preview")
+	local sixel_converters = require("sixel-preview.converters")
+	local sixel_preview = require("sixel-preview.preview")
+	local picker_util = require("snacks.picker.util")
+	local orig_file = snacks_preview.file
+
+	-- The image/PDF currently shown in a picker preview (or nil for a text
+	-- preview / closed picker). Tracked so window events can re-draw it.
+	local current ---@type { buf: integer, path: string }?
+
+	local function draw()
+		local img = current
+		if not img then
+			return
+		end
+		-- Lazily forget the image once its scratch buffer is gone or hidden
+		-- (e.g. the picker closed), so we never draw sixel into a stray window.
+		if not vim.api.nvim_buf_is_valid(img.buf) or vim.fn.bufwinid(img.buf) == -1 then
+			current = nil
+			return
+		end
+		sixel_preview.open_in_buf(img.buf, img.path)
+	end
+
+	-- Sixel pixels live in the terminal's graphics layer, not nvim's cell grid,
+	-- so any repaint of the preview window wipes them -- the image renders once
+	-- then "blinks and disappears". Snacks repaints on its own window events, so
+	-- we re-draw on the same ones (debounced past snacks' handler). This is how
+	-- Snacks.image and the mini.files preview keep their images alive.
+	local heal = Snacks.util.debounce(draw, { ms = 80 })
+	vim.api.nvim_create_autocmd(
+		{ "WinScrolled", "WinResized", "VimResized", "WinEnter", "BufWinEnter", "CursorMoved", "CursorMovedI" },
+		{
+			group = vim.api.nvim_create_augroup("sixel_snacks_picker", { clear = true }),
+			callback = function()
+				if current then
+					heal()
+				end
+			end,
+		}
+	)
+
+	snacks_preview.file = function(ctx)
+		local path = picker_util.path(ctx.item)
+		-- Only intercept real image/PDF files on disk; already-loaded buffers
+		-- and everything else fall through to snacks' default previewer.
+		local is_loaded_buf = ctx.item.buf and vim.api.nvim_buf_is_loaded(ctx.item.buf)
+		if path and not is_loaded_buf and sixel_converters.detect(path) then
+			local buf = ctx.preview:scratch()
+			ctx.preview:set_title(ctx.item.title or vim.fn.fnamemodify(path, ":t"))
+			current = { buf = buf, path = path }
+			-- Clear the previous image's pixels now, then draw the new one once
+			-- snacks has finished repainting (debounced).
+			pcall(vim.cmd, "mode")
+			heal()
+			return
+		end
+		current = nil
+		return orig_file(ctx)
+	end
+end
 
 require("mini.icons").setup()
 require("mini.files").setup({
@@ -230,17 +305,3 @@ require("conform").setup({
 	format_on_save = {},
 	formatters_by_ft = { lua = { "stylua" } },
 })
-
-require("telescope").setup({
-	defaults = {
-		borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
-		buffer_previewer_maker = require("sixel-preview.telescope").previewer_maker,
-	},
-	extensions = {
-		fzy_native = {
-			override_generic_sorter = false,
-			override_file_sorter = true,
-		},
-	},
-})
-require("telescope").load_extension("fzy_native")

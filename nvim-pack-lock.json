@@ -101,10 +101,6 @@
       "rev": "851e865342e5a4cb1ae23d31caf6e991e1c99f1e",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects"
     },
-    "plenary.nvim": {
-      "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
-      "src": "https://github.com/nvim-lua/plenary.nvim"
-    },
     "sixelvim": {
       "rev": "791191333361cc02541e853fc8542687c360b5ff",
       "src": "https://github.com/Metsker/sixelvim"
@@ -112,14 +108,6 @@
     "snacks.nvim": {
       "rev": "ad9ede6a9cddf16cedbd31b8932d6dcdee9b716e",
       "src": "https://github.com/folke/snacks.nvim"
-    },
-    "telescope-fzy-native.nvim": {
-      "rev": "282f069504515eec762ab6d6c89903377252bf5b",
-      "src": "https://github.com/nvim-telescope/telescope-fzy-native.nvim"
-    },
-    "telescope.nvim": {
-      "rev": "f04ab730b8f9c6bf3f54a206d0dcddfd70c52d59",
-      "src": "https://github.com/nvim-telescope/telescope.nvim"
     },
     "tmux.nvim": {
       "rev": "32ceaf2793582955ef9576809730878c4d2d9426",

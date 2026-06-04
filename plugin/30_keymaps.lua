@@ -107,17 +107,13 @@ miniclue.setup({
 
 -- Files
 set("n", "<C-s>", ":w<CR>")
-local builtin = require("telescope.builtin")
-set("n", "<leader>ff", builtin.find_files, { desc = "Find files" })
-set("n", "<leader>fg", builtin.live_grep, { desc = "Live grep" })
-set("n", "<leader>fb", builtin.buffers, { desc = "Buffers" })
-set("n", "<leader><leader>", function()
-	builtin.buffers({ ignore_current_buffer = false, sort_mru = true })
-	vim.api.nvim_feedkeys("<Esc>", "i", false)
-end, { desc = "Buffers" })
-
-set("n", "<leader>fd", builtin.builtin, { desc = "All pickers" })
-set("n", "<leader>?", builtin.keymaps, { desc = "Keymaps" })
+local picker = require("snacks").picker
+set("n", "<leader><leader>", function() picker.smart() end, { desc = "Smart picker" })
+set("n", "<leader>ff", function() picker.files() end, { desc = "Find files" })
+set("n", "<leader>fg", function() picker.grep() end, { desc = "Live grep" })
+set("n", "<leader>fb", function() picker.buffers() end, { desc = "Buffers" })
+set("n", "<leader>fd", function() picker.pickers() end, { desc = "All pickers" })
+set("n", "<leader>?", function() picker.keymaps() end, { desc = "Keymaps" })
 
 -- Tmux
 set("", "<C-S-h>", '<cmd>lua require("tmux").resize_to("left", step)<cr>')
