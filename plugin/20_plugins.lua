@@ -38,6 +38,41 @@ add({
 	-- gh("Wansmer/langmapper.nvim"),
 })
 
+local ts_parsers = {
+	-- languages
+	"rust",
+	"python",
+	"go",
+	"lua",
+	"gdscript",
+	"godot_resource",
+	"javascript",
+	"typescript",
+	"tsx",
+	"svelte",
+	"c",
+	"cpp",
+	-- config / dotfile formats
+	"tmux",
+	"bash",
+	"json",
+	"toml",
+	"yaml",
+	"css",
+	"html",
+	"markdown",
+}
+require("nvim-treesitter").install(ts_parsers)
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("ts_start", { clear = true }),
+	callback = function(ev)
+		if not vim.treesitter.highlighter.active[ev.buf] then
+			pcall(vim.treesitter.start, ev.buf)
+		end
+	end,
+})
+
 require("sixel-preview").setup({
 	sixel = {
 		chafa_colors = "full",
