@@ -1,1 +1,0 @@
-/home/metsker/.config/omarchy/current/theme/neovim.lua

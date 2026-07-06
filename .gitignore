@@ -1,0 +1,3 @@
+# Omarchy-specific (machine-local theme integration)
+plugin/40_theme_hotreload.lua
+theme.lua
