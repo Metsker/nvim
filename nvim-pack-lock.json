@@ -102,7 +102,7 @@
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects"
     },
     "sixelvim": {
-      "rev": "512073a49b56e13bb2f2c86e55b9e6537621bffb",
+      "rev": "3eb067a10e68ba467f13cbbe51691d7dbbfdab3d",
       "src": "https://github.com/Metsker/sixelvim"
     },
     "snacks.nvim": {
