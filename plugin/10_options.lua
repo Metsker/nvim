@@ -79,7 +79,18 @@ vim.lsp.config("lua_ls", {
 		},
 	},
 })
-vim.lsp.enable({ "lua_ls", "rust_analyzer" })
+vim.lsp.config("nil_ls", {
+	settings = {
+		["nil"] = {
+			nix = {
+				flake = {
+					autoArchive = true,
+				},
+			},
+		},
+	},
+})
+vim.lsp.enable({ "lua_ls", "rust_analyzer", "nil_ls" })
 
 -- Autocommands
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -120,6 +131,7 @@ vim.api.nvim_create_autocmd("CursorMoved", {
 		end
 	end,
 })
+
 vim.api.nvim_create_autocmd("CursorMovedI", {
 	group = lsp_ref_hl,
 	desc = "Clear highlights when entering insert mode",

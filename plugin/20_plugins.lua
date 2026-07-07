@@ -16,7 +16,6 @@ add({
 	gh("nvim-lualine/lualine.nvim"),
 	gh("windwp/nvim-autopairs"),
 	gh("karb94/neoscroll.nvim"),
-	gh("aserowy/tmux.nvim"),
 
 	gh("folke/snacks.nvim"),
 	gh("diogo464/hotreload.nvim"),
@@ -30,12 +29,11 @@ add({
 	gh("nvim-mini/mini.clue"),
 	gh("nvim-mini/mini.jump"),
 
-	gh("Metsker/sixelvim"),
+	-- gh("Metsker/sixelvim"),
 
 	gh("lewis6991/gitsigns.nvim"),
 
 	gh("mrsobakin/multilayout.nvim"),
-	-- gh("Wansmer/langmapper.nvim"),
 })
 
 local ts_parsers = {
@@ -52,6 +50,7 @@ local ts_parsers = {
 	"svelte",
 	"c",
 	"cpp",
+	"nix",
 	-- config / dotfile formats
 	"tmux",
 	"bash",
@@ -73,20 +72,20 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
-require("sixel-preview").setup({
-	sixel = {
-		chafa_colors = "full",
-		max_width = 800,
-		max_height = 600,
-	},
-	converters = {
-		image = "chafa",
-	},
-	integrations = {
-		snacks_picker = true,
-		mini_files = true,
-	},
-})
+-- require("sixel-preview").setup({
+-- 	sixel = {
+-- 		chafa_colors = "full",
+-- 		max_width = 800,
+-- 		max_height = 600,
+-- 	},
+-- 	converters = {
+-- 		image = "chafa",
+-- 	},
+-- 	integrations = {
+-- 		snacks_picker = true,
+-- 		mini_files = true,
+-- 	},
+-- })
 
 ---@diagnostic disable-next-line
 require("tmux").setup({
@@ -135,7 +134,6 @@ require("snacks").setup({
 		win = {
 			input = {
 				keys = {
-					-- single <Esc> closes the picker instead of dropping to normal mode first
 					["<Esc>"] = { "close", mode = { "n", "i" } },
 				},
 			},
@@ -152,18 +150,14 @@ require("mini.files").setup({
 	},
 	options = {
 		use_as_default_explorer = true,
-		permanent_delete = false,
+		permanent_delete = true,
 	},
 	mappings = {
-		go_in_plus = "<CR>",
+		go_in_plus = "l",
+		close = "<Esc>"
 	},
 })
-vim.api.nvim_create_autocmd("User", {
-	pattern = "MiniFilesBufferCreate",
-	callback = function(args)
-		vim.keymap.set("n", "<Esc>", require("mini.files").close, { buffer = args.data.buf_id })
-	end,
-})
+
 require("mini.operators").setup()
 require("mini.surround").setup()
 require("mini.move").setup()
@@ -217,5 +211,8 @@ require("conform").setup({
 		lsp_format = "fallback",
 	},
 	format_on_save = {},
-	formatters_by_ft = { lua = { "stylua" } },
+	formatters_by_ft = {
+		lua = { "stylua" },
+		nix = { "nixpkgs_fmt" }
+	},
 })
