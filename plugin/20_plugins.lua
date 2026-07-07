@@ -43,7 +43,6 @@ local ts_parsers = {
 	"go",
 	"lua",
 	"gdscript",
-	"godot_resource",
 	"javascript",
 	"typescript",
 	"tsx",
@@ -52,7 +51,6 @@ local ts_parsers = {
 	"cpp",
 	"nix",
 	-- config / dotfile formats
-	"tmux",
 	"bash",
 	"json",
 	"toml",
@@ -87,21 +85,6 @@ vim.api.nvim_create_autocmd("FileType", {
 -- 	},
 -- })
 
----@diagnostic disable-next-line
-require("tmux").setup({
-	copy_sync = {
-		enable = false,
-	},
-	resize = {
-		enable_default_keybindings = false,
-		resize_step_x = 5,
-		resize_step_y = 5,
-	},
-	swap = {
-		enable_default_keybindings = false,
-	},
-})
-
 require("nvim-autopairs").setup()
 require("lualine").setup({
 	options = {
@@ -134,6 +117,7 @@ require("snacks").setup({
 		win = {
 			input = {
 				keys = {
+				-- single <Esc> closes the picker instead of dropping to normal mode first
 					["<Esc>"] = { "close", mode = { "n", "i" } },
 				},
 			},
