@@ -117,7 +117,7 @@ require("snacks").setup({
 		win = {
 			input = {
 				keys = {
-				-- single <Esc> closes the picker instead of dropping to normal mode first
+					-- single <Esc> closes the picker instead of dropping to normal mode first
 					["<Esc>"] = { "close", mode = { "n", "i" } },
 				},
 			},
@@ -138,8 +138,30 @@ require("mini.files").setup({
 	},
 	mappings = {
 		go_in_plus = "l",
-		close = "<Esc>"
+		close = "<Esc>",
 	},
+})
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "MiniFilesBufferCreate",
+	callback = function(args)
+		local MiniFiles = require("mini.files")
+		vim.keymap.set("n", "<CR>", function()
+			MiniFiles.go_in({ close_on_file = true })
+		end, { buffer = buf })
+		vim.keymap.set("n", "q", function()
+			MiniFiles.close()
+		end, { buffer = buf })
+
+		local buf = args.data.buf_id
+		vim.keymap.set("n", "j", function()
+			local last = vim.fn.line("$")
+			vim.cmd(vim.fn.line(".") == last and "normal! gg" or "normal! j")
+		end, { buffer = buf })
+		vim.keymap.set("n", "k", function()
+			vim.cmd(vim.fn.line(".") == 1 and "normal! G" or "normal! k")
+		end, { buffer = buf })
+	end,
 })
 
 require("mini.operators").setup()
@@ -197,6 +219,6 @@ require("conform").setup({
 	format_on_save = {},
 	formatters_by_ft = {
 		lua = { "stylua" },
-		nix = { "nixpkgs_fmt" }
+		nix = { "nixpkgs_fmt" },
 	},
 })
