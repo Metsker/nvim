@@ -1,7 +1,7 @@
 {
   "plugins": {
     "base16-nvim": {
-      "rev": "21233d5fd574439ae1e2f5e4bfbc574214f4ab3d",
+      "rev": "fd128e380624c34f12a201690944bf657f861361",
       "src": "https://github.com/RRethy/base16-nvim"
     },
     "blink.cmp": {
@@ -22,7 +22,7 @@
       "src": "https://github.com/rafamadriz/friendly-snippets"
     },
     "gitsigns.nvim": {
-      "rev": "eb60cc7b94c46005237fd34170d76f3a089a90aa",
+      "rev": "31d6fb2d618bca1482b9f274751ead5f03461408",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "hotreload.nvim": {
@@ -42,7 +42,7 @@
       "src": "https://github.com/tahayvr/matteblack.nvim"
     },
     "mini.ai": {
-      "rev": "2f763720771e192bdf9d2e25bfae339930ba4231",
+      "rev": "25248c6aa002391936a6200f12d1466015987133",
       "src": "https://github.com/nvim-mini/mini.ai"
     },
     "mini.clue": {
@@ -50,7 +50,7 @@
       "src": "https://github.com/nvim-mini/mini.clue"
     },
     "mini.files": {
-      "rev": "0765a2502d3577b2b00d21f8f607f9bd7c8d89fc",
+      "rev": "d08e8da87be8bf07d09245294821706afcca31cd",
       "src": "https://github.com/nvim-mini/mini.files"
     },
     "mini.icons": {
@@ -70,7 +70,7 @@
       "src": "https://github.com/nvim-mini/mini.operators"
     },
     "mini.surround": {
-      "rev": "19b44c1bbe4eecaf191896b8bec657d5fdd549e4",
+      "rev": "8d5d0c5aa92449368ac251e85451d79d8f69d296",
       "src": "https://github.com/nvim-mini/mini.surround"
     },
     "multilayout.nvim": {
@@ -86,7 +86,7 @@
       "src": "https://github.com/EdenEast/nightfox.nvim"
     },
     "nvim": {
-      "rev": "e068ab5f8261f23f6f71ffd8791ae40315b77b9c",
+      "rev": "058e83dc009e4dd62f30807054de9cc849699e27",
       "src": "https://github.com/catppuccin/nvim"
     },
     "nvim-autopairs": {
@@ -102,7 +102,7 @@
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-treesitter-textobjects": {
-      "rev": "851e865342e5a4cb1ae23d31caf6e991e1c99f1e",
+      "rev": "898ee307df58f854d11cd7edd06472574d48014e",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects"
     },
     "sixelvim": {
