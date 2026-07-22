@@ -29,8 +29,6 @@ add({
 	gh("nvim-mini/mini.clue"),
 	gh("nvim-mini/mini.jump"),
 
-	-- gh("Metsker/sixelvim"),
-
 	gh("lewis6991/gitsigns.nvim"),
 
 	gh("mrsobakin/multilayout.nvim"),
@@ -70,21 +68,6 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
--- require("sixel-preview").setup({
--- 	sixel = {
--- 		chafa_colors = "full",
--- 		max_width = 800,
--- 		max_height = 600,
--- 	},
--- 	converters = {
--- 		image = "chafa",
--- 	},
--- 	integrations = {
--- 		snacks_picker = true,
--- 		mini_files = true,
--- 	},
--- })
-
 require("nvim-autopairs").setup()
 require("lualine").setup({
 	options = {
@@ -112,6 +95,7 @@ require("snacks").setup({
 	statuscolumn = { enabled = true },
 	indent = { enabled = true },
 	quickfile = { enabled = true },
+	image = { enabled = true },
 	picker = {
 		enabled = true,
 		win = {
