@@ -50,6 +50,9 @@ if vim.fn.exists("syntax_on") ~= 1 then
 	vim.cmd("syntax enable")
 end
 
+-- FileTypes
+vim.filetype.add({ pattern = { [".*%.conf"] = "dosini" } })
+
 -- Diagnostics
 local diagnostic_opts = {
 	signs = { priority = 9999, severity = { min = "WARN", max = "ERROR" } },
